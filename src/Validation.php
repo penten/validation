@@ -81,7 +81,7 @@ class Validation
      */
     public function getAttribute(string $attributeKey)
     {
-        return isset($this->attributes[$attributeKey])? $this->attributes[$attributeKey] : null;
+        return isset($this->attributes[$attributeKey]) ? $this->attributes[$attributeKey] : null;
     }
 
     /**
@@ -209,7 +209,7 @@ class Validation
         $attributes = [];
 
         foreach ($data as $key => $value) {
-            if ((bool) preg_match('/^'.$pattern.'\z/', $key, $match)) {
+            if ((bool) preg_match('/^' . $pattern . '\z/', $key, $match)) {
                 $attr = new Attribute($this, $key, null, $attribute->getRules());
                 $attr->setPrimaryAttribute($attribute);
                 $attr->setKeyIndexes(array_slice($match, 1));
@@ -218,11 +218,15 @@ class Validation
         }
 
         // set other attributes to each attributes
+        // NOTE: we do not do this, because it causes huge memory useage for large arrays (square of the length of the
+        // array objects are created?!) and it doesn't seem to be used anywhere.
+        /*
         foreach ($attributes as $i => $attr) {
             $otherAttributes = $attributes;
             unset($otherAttributes[$i]);
             $attr->setOtherAttributes($otherAttributes);
         }
+        */
 
         return $attributes;
     }
@@ -264,7 +268,7 @@ class Validation
         $pattern = str_replace('\*', '[^\.]+', preg_quote($attributeKey));
 
         foreach ($data as $key => $value) {
-            if ((bool) preg_match('/^'.$pattern.'/', $key, $matches)) {
+            if ((bool) preg_match('/^' . $pattern . '/', $key, $matches)) {
                 $keys[] = $matches[0];
             }
         }
@@ -397,7 +401,7 @@ class Validation
         $alias = $attribute->getAlias() ?: $this->resolveAttributeName($attribute);
         $message = $validator->getMessage(); // default rule message
         $messageKeys = [
-            $attributeKey.$this->messageSeparator.$ruleKey,
+            $attributeKey . $this->messageSeparator . $ruleKey,
             $attributeKey,
             $ruleKey
         ];
@@ -412,7 +416,7 @@ class Validation
             //     $ruleKey
             // ];
             $primaryAttributeKey = $primaryAttribute->getKey();
-            array_splice($messageKeys, 1, 0, $primaryAttributeKey.$this->messageSeparator.$ruleKey);
+            array_splice($messageKeys, 1, 0, $primaryAttributeKey . $this->messageSeparator . $ruleKey);
             array_splice($messageKeys, 3, 0, $primaryAttributeKey);
         }
 
@@ -431,7 +435,7 @@ class Validation
 
         foreach ($vars as $key => $value) {
             $value = $this->stringify($value);
-            $message = str_replace(':'.$key, $value, $message);
+            $message = str_replace(':' . $key, $value, $message);
         }
 
         // Replace key indexes
@@ -498,7 +502,7 @@ class Validation
                 $validator = call_user_func_array($validatorFactory, ['callback', $rule]);
             } else {
                 $ruleName = is_object($rule) ? get_class($rule) : gettype($rule);
-                $message = "Rule must be a string, Closure or '".Rule::class."' instance. ".$ruleName." given";
+                $message = "Rule must be a string, Closure or '" . Rule::class . "' instance. " . $ruleName . " given";
                 throw new \Exception();
             }
 
@@ -519,7 +523,7 @@ class Validation
         $exp = explode(':', $rule, 2);
         $rulename = $exp[0];
         if ($rulename !== 'regex') {
-            $params = isset($exp[1])? explode(',', $exp[1]) : [];
+            $params = isset($exp[1]) ? explode(',', $exp[1]) : [];
         } else {
             $params = [$exp[1]];
         }
@@ -547,7 +551,7 @@ class Validation
      */
     public function getAlias(string $attributeKey)
     {
-        return isset($this->aliases[$attributeKey])? $this->aliases[$attributeKey] : null;
+        return isset($this->aliases[$attributeKey]) ? $this->aliases[$attributeKey] : null;
     }
 
     /**
